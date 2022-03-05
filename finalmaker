@@ -1,0 +1,911 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <locale.h>
+#include <string.h>
+
+#define TAMANHOADM 8
+#define TAMANHOCLIENTE 100
+#define VERD 1
+#define FALSO 0
+
+int qtdtickets = 0, CadTicket[500];
+
+struct Curso
+{
+    int codigo;               // -1 indica que a posição do elemento no vetor está vazia
+    char nomeCurso[20];       // nome do curso
+    char DescricaoCurso[100]; // como vai ser o curso
+    float Preco;              // preço do curso
+    int tempoCurso;           // duraçao do curso
+} vetCurso[TAMANHOADM];
+
+// funções basicas
+
+int menuPrincipal();
+int menuPrincipalAdm();
+
+// Função colocar os vetores em -1 do id.
+int inicializarCurso()
+{
+    int resp = FALSO;
+    int i;
+    for (i = 0; i < TAMANHOADM; i++)
+    {
+        vetCurso[i].codigo = -1;
+    }
+    resp = VERD;
+    return resp;
+}
+
+// Função para cadastrar os cursos
+int cadastroCurso(int pos)
+{
+    int resp = FALSO;
+
+    system("cls");
+    printf("|-----------------------------------|\n");
+    printf("|       Cadastrando cursos          |\n");
+    printf("|-----------------------------------|\n");
+    printf("|Identificador:  %d\n", pos);
+    vetCurso[pos].codigo = pos;
+    fflush(stdin);
+    printf("|-----------------------------------|\n");
+    printf("|Nome do Curso: ");
+    gets(vetCurso[pos].nomeCurso);
+    fflush(stdin);
+    printf("|-----------------------------------|\n");
+    printf("|Descricao do Curso: \n");
+    printf("|");
+    gets(vetCurso[pos].DescricaoCurso);
+    printf("|-----------------------------------|\n");
+    printf("|Preco do Curso:R$ ");
+    scanf("%f", &vetCurso[pos].Preco);
+    printf("|-----------------------------------|\n");
+    printf("|Carga Horaria do Curso: ");
+    scanf("%d", &vetCurso[pos].tempoCurso);
+    printf("|-----------------------------------|\n");
+    printf("|Cadastro Efetuado com Sucesso..    |\n");
+    printf("|-----------------------------------|\n");
+    system("pause");
+    resp = VERD;
+    return resp;
+}
+
+// Case 4 listar
+int listarCurso()
+{
+    int resp = FALSO;
+    int i;
+    system("cls");
+
+    printf("|------------------------------------|\n");
+    printf("|          Cursos Disponiveis        |\n");
+    printf("|------------------------------------|\n");
+    for (i = 0; i < TAMANHOADM; i++)
+    {
+        if (vetCurso[i].codigo != -1)
+        {
+            printf("|Codigo: %d\n", vetCurso[i].codigo);
+            printf("|Nome do curso: %s\n", vetCurso[i].nomeCurso);
+            printf("|Descricao do curso: %s\n", vetCurso[i].DescricaoCurso);
+            printf("|Preco: %.2f\n", vetCurso[i].Preco);
+            printf("|Carga horaria: %d\n", vetCurso[i].tempoCurso);
+            printf("|------------------------------------|\n");
+        }
+    }
+    resp = VERD;
+    return resp;
+}
+
+// buscar curso
+int buscarCurso(int pos)
+{
+    int resp = FALSO;
+    system("cls");
+    printf("|------------------------------------|\n");
+    printf("|Codigo: %d\n", vetCurso[pos].codigo);
+    printf("|Nome do curso: %s\n", vetCurso[pos].nomeCurso);
+    printf("|Descricao do curso: %s\n", vetCurso[pos].DescricaoCurso);
+    printf("|Preco: %.2f\n", vetCurso[pos].Preco);
+    printf("|Carga horaria: %d\n", vetCurso[pos].tempoCurso);
+    printf("|------------------------------------|\n");
+    resp = VERD;
+    return resp;
+}
+
+// Case 1 incluirCurso
+int IncluirCurso()
+{
+    int resp = FALSO;
+    int i;
+    int posicao = -1;
+    for (i = 0; i < TAMANHOADM; i++)
+    { // verificar se tem espaço
+        if (vetCurso[i].codigo == -1)
+        {
+            posicao = i;
+            break;
+        }
+    }
+    if (posicao != -1)
+    {
+        if (cadastroCurso(posicao))
+        {
+            resp = VERD;
+        }
+    }
+    else
+    {
+        resp = FALSO;
+    }
+    return resp;
+}
+
+// Case 2 alterar
+int alterarCurso()
+{
+    int resp = FALSO;
+    int pos = -1;
+    char confirma;
+    system("cls");
+    listarCurso();
+
+    printf("|           Alterando curso          |\n");
+    printf("|------------------------------------|\n");
+    printf("| Indique o identificador do curso.. |\n");
+    printf("|------------------------------------|\n");
+    printf("|DIGITE A OPCAO: ");
+    scanf("%d", &pos);
+    fflush(stdin); // limpeza do buffer do teclado para não pular leituras
+    if (buscarCurso(pos))
+    {
+        printf("|------------------------------------|\n");
+        printf("|     Confirmar Alteracao [s/n]?     |\n");
+        printf("|------------------------------------|\n");
+        printf("|DIGITE A OPCAO: ");
+        scanf("%c", &confirma);
+
+        if (confirma == 's' || confirma == 'S')
+        {
+            cadastroCurso(pos);
+            resp = VERD;
+        }
+    }
+    return resp;
+}
+
+// Case 3 remover curso
+int removerCurso()
+{
+    int resp = FALSO;
+    int pos = -1;
+    char confirma;
+    system("cls");
+    listarCurso();
+
+    printf("|       Remover curso cadastrado     |\n");
+    printf("|------------------------------------|\n");
+    printf("| Indique o identificador do curso.. |\n");
+    printf("|------------------------------------|\n");
+    printf("|DIGITE A OPCAO: ");
+    scanf("%d", &pos);
+    fflush(stdin); // limpeza do buffer do teclado para nãopular leituras
+    if (buscarCurso(pos))
+    {
+        printf("|     Confirmar Alteracao [s/n]?     |\n");
+        printf("|------------------------------------|\n");
+        printf("|DIGITE A OPCAO: ");
+        scanf("%c", &confirma);
+        if (confirma == 's' || confirma == 'S')
+        {
+            vetCurso[pos].codigo = -1;
+            resp = VERD;
+        }
+        system("cls");
+        printf("|-----------------------------------|\n");
+        printf("| Curso removido com Sucesso..      |\n");
+        printf("|-----------------------------------|\n");
+        printf("|DIGITE A OPCAO: ");
+        system("pause");
+    }
+    return resp;
+}
+
+// Aqui vai começar a parte do Cliente.
+
+struct Cliente
+{
+    int idade, telefone, qtdfamilia, codigo, vetcodigo[8];
+    char nomecliente[50], endereco[100];
+    float renda, rendapercapita, desconto;
+} vetCliente[TAMANHOCLIENTE];
+
+// inicializar o cadastro do cliente
+int inicializarCliente()
+{
+    int resp = FALSO;
+    int i;
+    for (i = 0; i < TAMANHOCLIENTE; i++)
+    {
+        vetCliente[i].codigo = -1;
+    }
+    resp = VERD;
+    return resp;
+}
+
+int cadastroCliente(int pos)
+{
+    int resp = FALSO;
+    system("cls");
+    printf("|------------------------------------------|\n");
+    printf("|                 Cadasto                  |\n");
+    printf("|------------------------------------------|\n");
+    printf("|Numero de Cadastro: %d\n", pos);
+    vetCliente[pos].codigo = pos;
+    fflush(stdin);
+    printf("|------------------------------------------|\n");
+    printf("|Digite seu nome: ");
+    gets(vetCliente[pos].nomecliente); // verificar se o nome digitado foi é string realmente.
+    printf("|------------------------------------------|\n");
+    printf("|Digite sua idade: ");
+    scanf("%d", &vetCliente[pos].idade); // tem que verificar se a idade esta correta (deve ter pelo menos 1 ano e no max 122 anos)
+    fflush(stdin);
+    while (vetCliente[pos].idade < 0 || vetCliente[pos].idade > 122) // verificando se a idade esta correta
+    {
+        printf("|------------------------------------------|\n");
+        printf("|Digite uma idade valida\n |(entre 0 e 122): ");
+        scanf("%d", &vetCliente[pos].idade);
+        fflush(stdin);
+    }
+    printf("|------------------------------------------|\n");
+    printf("|Digite seu endereco no formato \n|(Rua XXX - n - complemento)\n|Endereco.: ");
+    gets(vetCliente[pos].endereco); // verificar o endereco ? não sei bem como fazer isso não.
+    fflush(stdin);
+    printf("|------------------------------------------|\n");
+    printf("|Digite seu telefone no formato \n|(DD xxxxx-xxxx)\n|Telefone: ");
+    scanf("%d", &vetCliente[pos].telefone); // tem que verificar se o num de telefone esta certo (tem que ter 9 digitos etc)
+    fflush(stdin);
+
+    printf("|------------------------------------------|\n");
+    printf("|Digite sua Renda total: ");
+    scanf("%f", &vetCliente[pos].renda); // verificando se a renda é valida
+    while (vetCliente[pos].renda <= 0)
+    {
+        printf("|------------------------------------------|\n");
+        printf("|Digite uma renda valida: ");
+        scanf("%f", &vetCliente[pos].renda);
+    }
+    printf("|------------------------------------------|\n");
+    printf("|Quantas pessoas moram em sua residencia: ");
+    scanf("%d", &vetCliente[pos].qtdfamilia); // tem que ser pelo menos 1 pessoa
+    while (vetCliente[pos].qtdfamilia <= 0)   // verificando se a quantidade de família é valida
+    {
+        printf("|------------------------------------------|\n");
+        printf("|Digite uma quantidade valida\n|(Pelo menos 1): ");
+        scanf("%d", &vetCliente[pos].qtdfamilia);
+        printf("|------------------------------------------|\n");
+        printf("|     CADASTRO EFETUADO COM SUCESSO!       |\n");
+        printf("|------------------------------------------|\n");
+        system("pause");
+    }
+
+    vetCliente[pos].rendapercapita = vetCliente[pos].renda / vetCliente[pos].qtdfamilia;
+    if (vetCliente[pos].rendapercapita < 1000)
+    {
+        system("cls");
+        printf("|-----------------------------------|\n");
+        printf("|             PARABENS!             |\n");
+        printf("|-----------------------------------|\n");
+        printf("|                                   |\n");
+        printf("| Voce tem direito a um desconto    |\n");
+        printf("| de 70%% no valor final da compra   |\n");
+        printf("|                                   |\n");
+        printf("|-----------------------------------|\n");
+        system("pause");
+        vetCliente[pos].desconto = 0.3; // usei o 0.3 pois ja vai dar o valor final quando multiplicar.
+    }
+    else if (vetCliente[pos].rendapercapita < 2000)
+    {
+        system("cls");
+        printf("|-----------------------------------|\n");
+        printf("|             PARABENS!             |\n");
+        printf("|-----------------------------------|\n");
+        printf("|                                   |\n");
+        printf("| Voce tem direito a um desconto    |\n");
+        printf("| de 50%% no valor final da compra   |\n");
+        printf("|                                   |\n");
+        printf("|-----------------------------------|\n");
+        system("pause");
+        vetCliente[pos].desconto = 0.5; // usei o 0.5 pois ja vai dar o valor final quando multiplicar.
+    }
+    else if (vetCliente[pos].rendapercapita >= 2000)
+    {
+        system("cls");
+        printf("|-----------------------------------|\n");
+        printf("|             INFELIZMENTE          |\n");
+        printf("|-----------------------------------|\n");
+        printf("|                                   |\n");
+        printf("|  Voce nao tem direito a desconto  |\n");
+        printf("|                                   |\n");
+        printf("|-----------------------------------|\n");
+        system("pause");
+        vetCliente[pos].desconto = 1;
+    }
+    resp = VERD;
+    return resp;
+}
+
+int IncluirCliente()
+{
+    int resp = FALSO;
+    int i;
+    int posicao = -1;
+    for (i = 0; i < TAMANHOCLIENTE; i++)
+    { // verificar se tem espaço
+        if (vetCliente[i].codigo == -1)
+        {
+            posicao = i;
+            break;
+        }
+    }
+    if (posicao != -1)
+    {
+        if (cadastroCliente(posicao))
+        {
+            resp = VERD;
+        }
+    }
+    else
+    {
+        resp = FALSO;
+    }
+    return resp;
+}
+
+int listarCliente()
+{
+    int resp = FALSO;
+    int i, j;
+    system("cls");
+    for (i = 0; i < TAMANHOCLIENTE; i++)
+    {
+        if (vetCliente[i].codigo != -1)
+        {
+            printf("|------------------------------------|\n");
+            printf("|         Friends cadastrados        |\n");
+            printf("|------------------------------------|\n");
+            printf("|Codigo: %d\n", vetCliente[i].codigo);
+            printf("|Nome do cliente: %s\n", vetCliente[i].nomecliente);
+            printf("|Idade do cliente: %d\n", vetCliente[i].idade);
+            printf("|Endereco cadastrado: %s\n", vetCliente[i].endereco);
+            printf("|Telefone cadastrado: %d\n", vetCliente[i].telefone);
+            printf("|Renda total cadastrada: %.2f\n", vetCliente[i].renda);
+            printf("|Quantidade de familiares cadastrado: %d\n", vetCliente[i].qtdfamilia);
+            printf("|------------------------------------|\n");
+        }
+    }
+
+    resp = VERD;
+    return resp;
+}
+
+// CARRINHO DE COMPRAS
+// struct para o carrinho de compra
+struct Carrinho
+{
+    int codProd;
+    float valortotal;
+} vetCarrinho[5];
+
+// função da doação para ganhar cupom para sorteio.
+int doacao(int pos)
+{
+
+    int resp = FALSO, escolha, i;
+    float doacao;
+
+    system("cls");
+    printf("|-----------------------------------|\n");
+    printf("|     AJUDE UM DE NOSSOS FRIENDS!   |\n");
+    printf("|-----------------------------------|\n");
+    printf("|                                   |\n");
+    printf("|  DIZEM QUE NAO SE PODE MUDAR O    |\n");
+    printf("|  MUNDO, MAS NOS DA FRIEND CODE    |\n");
+    printf("|  ACREDITAMOS QUE JUNTOS PODEMOS   |\n");
+    printf("|  FAZER A DIFERENCA!               |\n");
+    printf("|-----------------------------------|\n");
+    printf("|                                   |\n");
+    printf("|  ATRAVEZ DE UMA SIMPLES DOACAO    |\n");
+    printf("|  VOCE NOS AJUDA A CUSTEAR BOLSAS  |\n");
+    printf("|                                   |\n");
+    printf("|  ------> DE 50%% E 70%% <------     |\n");
+    printf("|                                   |\n");
+    printf("| PARA FRIENDS COM  RENDA MINIMA E  |\n");
+    printf("| COM ISSO POSSIBILITAR QUE TODOS   |\n");
+    printf("| TENHAM ACESSO E CONHECIMENTO NA   |\n");
+    printf("| AREA DE TECLOGIA.                 |\n");
+    printf("|-----------------------------------|\n");
+    printf("|                                   |\n");
+    printf("| ALEM DE AJUDAR UM FRIEND VOCE     |\n");
+    printf("| GANHA A CHANCE DE PARTICIPAR DE   |\n");
+    printf("| SORTEIOS CONCORRENDO A PREMIOS    |\n");
+    printf("| INCRIVEIS CADA VEZ QUE VOCE DOA.  |\n");
+    printf("|-----------------------------------|\n");
+    printf("|                                   |\n");
+    printf("| DE R$20 A R$50 = 1 TICKET         |\n");
+    printf("| A PARTIR DE R$50 A R$80 = 2 TICKET|\n");
+    printf("| A PARTIR DE R$80 = 3 TICKET       |\n");
+    printf("|-----------------------------------|\n");
+    printf("| DESEJA DOAR? 1-SIM | 2-NAO        |\n");
+    printf("|-----------------------------------|\n");
+    printf("|DIGITE A OPCAO: ");
+    scanf("%d", &escolha);
+    system("pause");
+    if (escolha == 1)
+    {
+        system("cls");
+        printf("|-----------------------------------|\n");
+        printf("|                                   |\n");
+        printf("| DE R$20 A R$50 = 1 TICKET         |\n");
+        printf("| A PARTIR DE R$50 A R$80 = 2 TICKET|\n");
+        printf("| A PARTIR DE R$80 = 3 TICKET       |\n");
+        printf("|-----------------------------------|\n");
+        printf("| QUAL VALOR DESEJA DOAR?           |\n");
+        printf("|-----------------------------------|\n");
+        printf("|DIGITE A OPCAO: ");
+        scanf("%f", &doacao);
+        if (doacao > 20 && doacao < 50)
+        {
+            system("cls");
+            printf("|-----------------------------------|\n");
+            printf("| MUITO OBRIGADO E BOA SORTE FRIND! |\n");
+            printf("|-----------------------------------|\n");
+            printf("|    VOCE GANHOU 1 TICKET PARA      |\n");
+            printf("|       CONCORRER AO SORTEIO!       |\n");
+            printf("|-----------------------------------|\n");
+            system("pause");
+            qtdtickets += 1;
+            for (i = qtdtickets - 1; i < qtdtickets; i++)
+            {
+                CadTicket[i] = vetCliente[pos].codigo;
+            }
+        }
+        else if (doacao > 50 && doacao < 80)
+        {
+            system("cls");
+            printf("|-----------------------------------|\n");
+            printf("| MUITO OBRIGADO E BOA SORTE FRIND! |\n");
+            printf("|-----------------------------------|\n");
+            printf("|    VOCE GANHOU 2 TICKET PARA      |\n");
+            printf("|       CONCORRER AO SORTEIO!       |\n");
+            printf("|-----------------------------------|\n");
+            system("pause");
+            qtdtickets += 2;
+            for (i = qtdtickets - 2; i < qtdtickets; i++)
+            {
+                CadTicket[i] = vetCliente[pos].codigo;
+            }
+        }
+        else if (doacao >= 80)
+        {
+            system("cls");
+            printf("|-----------------------------------|\n");
+            printf("| MUITO OBRIGADO E BOA SORTE FRIND! |\n");
+            printf("|-----------------------------------|\n");
+            printf("|    VOCE GANHOU 3 TICKET PARA      |\n");
+            printf("|       CONCORRER AO SORTEIO!       |\n");
+            printf("|-----------------------------------|\n");
+            system("pause");
+            qtdtickets += 3;
+            for (i = (qtdtickets - 3); i < qtdtickets; i++)
+            {
+                CadTicket[i] = vetCliente[pos].codigo;
+            }
+        }
+    }
+
+    resp = VERD;
+    return resp;
+}
+
+int ComprarCursos()
+
+{
+    int resp = FALSO, opcaocompra, qtdcursoscomprar, codigocurso, i, pos, posicao, prodachado;
+    float totalcarrinho = 0;
+
+    system("cls");
+    printf("|------------------------------------|\n");
+    printf("| JA POSSUI CADASTRO? 1-SIM | 2-NAO  |\n");
+    printf("|------------------------------------|\n");
+    printf("|DIGITE A OPCAO: ");
+    scanf("%d", &opcaocompra);
+    if (opcaocompra == 2)
+    {
+        IncluirCliente();
+    }
+
+    printf("|------------------------------------|\n");
+    printf("|   QUAL SEU NUMERO DE CADASTRO?     |\n");
+    printf("|------------------------------------|\n");
+    printf("|DIGITE A OPCAO: ");
+    scanf("%d", &pos);
+    // printf("Voce tem direito a %.2f ");
+    listarCurso();
+
+    printf("|  DESEJA COMPRAR QUANTOS CURSOS?    |\n");
+    printf("|------------------------------------|\n");
+    printf("|DIGITE A OPCAO: ");
+    scanf("%d", &qtdcursoscomprar);
+    while (qtdcursoscomprar > 8 && qtdcursoscomprar < 0)
+    {
+        printf("|------------------------------------|\n");
+        printf("|   INFORME UMA QUANTIDADE VALIDA!   |\n");
+        printf("|------------------------------------|\n");
+        printf("|DIGITE A OPCAO: ");
+    }
+
+    for (i = 0; i < qtdcursoscomprar; i++)
+    {
+        printf("|---------------------------------------|\n");
+        printf("|INFORME O CODIGO DO CURSO!             |\n");
+        printf("|---------------------------------------|\n");
+        printf("|DIGITE A OPCAO: ");
+        scanf("%d", &codigocurso);
+
+        for (i = 0; i < TAMANHOADM; i++)
+        {
+            if (codigocurso == vetCurso[i].codigo)
+            {
+                // posicao = i;
+                prodachado = 1;
+                break;
+            }
+        }
+        if (prodachado == 1)
+        {
+            vetCarrinho[i].codProd = codigocurso;
+            vetCarrinho[i].valortotal = vetCurso[i].Preco;
+            totalcarrinho = vetCarrinho[i].valortotal + totalcarrinho;
+        }
+    }
+
+    if (vetCliente[pos].rendapercapita >= 2000)
+    {
+        doacao(pos);
+    }
+
+    printf("|---------------------------------------|\n");
+    printf("|             VALOR TOTAL:              |\n");
+    printf("|---------------------------------------|\n");
+    printf("| R$ %.2f Reais\n", totalcarrinho * vetCliente[pos].desconto);
+    printf("|---------------------------------------|\n");
+    system("pause");
+    resp = VERD;
+    return resp;
+}
+
+int sorteio()
+{
+    int resp = FALSO, numsorteio;
+
+    if (qtdtickets == 0)
+    {
+        printf("\nNão há tickets cadastrados ainda!\n");
+    }
+
+    numsorteio = rand() % qtdtickets;
+    system("cls");
+    printf("|-----------------------------------|\n");
+    printf("|              Sorteio              |\n");
+    printf("|-----------------------------------|\n");
+    printf("|                                   |\n");
+    printf("|    O VENCEDOR E NOSSO FRIEND      |\n");
+    printf("|                                   |\n");
+    printf("|-----------------------------------|\n");
+    printf("| --> %s                \n", vetCliente[CadTicket[numsorteio]].nomecliente);
+    printf("|-----------------------------------|\n");
+
+    system("pause");
+    qtdtickets = 0;
+
+    resp = VERD;
+    return resp;
+}
+
+int qtdsorteio()
+{
+    int resp = FALSO;
+    system("cls");
+    printf("|-----------------------------------|\n");
+    printf("|     QUANTIDADES DE TICKTES        |\n");
+    printf("|-----------------------------------|\n");
+    printf("|     %d TICKTES VALIDOS            |\n", qtdtickets);
+    printf("|-----------------------------------|\n");
+    system("pause");
+    resp = VERD;
+    return resp;
+}
+
+int numerosorteio()
+{
+
+    int resp = FALSO, i;
+    printf("Ticket  Numero do cadastro Nome do Cliente\n");
+    for (i = 0; i < qtdtickets; i++)
+    {
+        printf("%d\t%d\t           %s\n", i, vetCliente[CadTicket[i]].codigo, vetCliente[CadTicket[i]].nomecliente);
+    }
+    system("pause");
+    resp = VERD;
+    return resp;
+}
+
+int main()
+{
+
+    inicializarCurso();
+    inicializarCliente();
+
+    int condicao = VERD, i, opc;
+    do // menu principal
+    {
+        int continuar = VERD;
+
+        opc = menuPrincipal();
+
+        if (opc == 1)
+        {
+            do // menu admin
+            {
+
+                opc = menuPrincipalAdm();
+
+                switch (opc)
+                {
+                case 1:
+                    IncluirCurso();
+                    break;
+                case 2:
+                    alterarCurso();
+                    break;
+                case 3:
+                    removerCurso();
+                    break;
+                case 4:
+                    listarCurso();
+                    system("pause");
+                    break;
+                case 5:
+                    opc = menuPrincipalAdmSorteio();
+                    if (opc == 1)
+                    {
+                        sorteio();
+                    }
+                    else if (opc == 2)
+                    {
+                        listarCliente();
+                        system("pause");
+                    }
+                    else if (opc == 3)
+                    {
+                        qtdsorteio();
+                    }
+                    else if (opc == 4)
+                    {
+                        numerosorteio();
+                    }
+                    break;
+                case 0:
+                    continuar = FALSO;
+                    system("pause");
+                    system("cls");
+                    break;
+                default:
+                    printf("Opcao Invalida");
+                    break;
+                }
+
+            } while (continuar);
+        }
+        else if (opc == 2)
+        {
+            do // menu cliente
+            {
+
+                opc = menuPrincipalCliente();
+
+                switch (opc)
+                {
+                case 1: // cadastrando o cliente
+                    IncluirCliente();
+                    break;
+                case 2: // listar cursos
+                    listarCurso();
+                    system("pause");
+
+                    break;
+                case 3:
+                    ComprarCursos();
+                    break;
+                case 0:
+                    continuar = FALSO;
+                    break;
+                default:
+                    printf("Opcao Invalida");
+                    break;
+                }
+
+            } while (continuar);
+        }
+        else if (opc == 3)
+        {
+            condicao = FALSO;
+            return 0;
+        }
+
+    } while (condicao);
+
+    return 0;
+}
+
+int menuPrincipal()
+{
+    int opc;
+    system("cls");
+    printf("|-----------------------------------|\n"); // Menu PRINCIPAL
+    printf("|                Menu               |\n");
+    printf("|-----------------------------------|\n");
+    printf("|                                   |\n");
+    printf("| 1- ADMINISTRADOR                  |\n");
+    printf("| 2- CLIENTE                        |\n");
+    printf("| 3- SAIR:                          |\n");
+    printf("|                                   |\n");
+    printf("|-----------------------------------|\n");
+    printf("|DIGITE A OPCAO: ");
+    scanf("%d", &opc);
+
+    while (opc != 1 && opc != 2 && opc != 3) // tratando erro (menu)
+    {
+        system("cls");
+        printf("\n|-----------------------------------|\n"); //
+        printf("|                Menu               |\n");
+        printf("|-----------------------------------|\n");
+        printf("|          OPECAO INVALIDA          |\n");
+        printf("|                                   |\n");
+        printf("| 1- ADMINISTRADOR                  |\n");
+        printf("| 2- CLIENTE                        |\n");
+        printf("| 3- SAIR:                          |\n");
+        printf("|                                   |\n");
+        printf("|-----------------------------------|\n");
+        printf("|DIGITE A OPCAO: ");
+        scanf("%d", &opc);
+    }
+    return opc;
+}
+
+int menuPrincipalAdm() // MENU ADM
+{
+    int opc;
+
+    system("cls");
+    printf("|-----------------------------------|\n");
+    printf("|                Menu               |\n");
+    printf("|-----------------------------------|\n");
+    printf("|                                   |\n");
+    printf("| 1- CADASTRAR CURSOS               |\n");
+    printf("| 2- ALTERAR CURSOS                 |\n");
+    printf("| 3- REMOVER CURSOS                 |\n");
+    printf("| 4- LISTAR CURSOS                  |\n");
+    printf("| 5- MENU SORTEIO                   |\n");
+    printf("|                                   |\n");
+    printf("|-----------------------------------|\n");
+    printf("| 0 - MENU PRINCIPAL                |\n");
+    printf("|-----------------------------------|\n");
+    printf("|DIGITE A OPCAO: ");
+    scanf("%d", &opc);
+
+    while (opc != 1 && opc != 2 && opc != 0 && opc != 3 && opc != 4 && opc != 5) // tratando erro (menu)
+    {
+        system("cls");
+        printf("|-----------------------------------|\n");
+        printf("|                Menu               |\n");
+        printf("|-----------------------------------|\n");
+        printf("|           OPCAO INVALIDA!         |\n");
+        printf("|                                   |\n");
+        printf("| 1- CADASTRAR CURSOS               |\n");
+        printf("| 2- ALTERAR CURSOS                 |\n");
+        printf("| 3- REMOVER CURSOS                 |\n");
+        printf("| 4- LISTAR CURSOS                  |\n");
+        printf("| 5- MENU SORTEIO                   |\n");
+        printf("|                                   |\n");
+        printf("|-----------------------------------|\n");
+        printf("| 0 - MENU PRINCIPAL                |\n");
+        printf("|-----------------------------------|\n");
+        printf("|DIGITE A OPCAO: ");
+        scanf("%d", &opc);
+    }
+    return opc;
+}
+
+int menuPrincipalAdmSorteio() // MENU ADM para fazer o
+{
+    int opc;
+
+    system("cls");
+    printf("|-----------------------------------|\n");
+    printf("|                Menu               |\n");
+    printf("|-----------------------------------|\n");
+    printf("|                                   |\n");
+    printf("| 1- SORTEAR                        |\n");
+    printf("| 2- LISTAR CLIENTES                |\n");
+    printf("| 3- LISTAR TICKTES                 |\n");
+    printf("| 4- TICKETS E INFORMACOES          |\n");
+    printf("|                                   |\n");
+    printf("|-----------------------------------|\n");
+    printf("| 0 - MENU PRINCIPAL                |\n");
+    printf("|-----------------------------------|\n");
+    printf("|DIGITE A OPCAO: ");
+    scanf("%d", &opc);
+
+    while (opc != 1 && opc != 2 && opc != 0 && opc != 3 && opc != 4) // tratando erro (menu)
+    {
+        system("cls");
+        printf("|-----------------------------------|\n");
+        printf("|                Menu               |\n");
+        printf("|-----------------------------------|\n");
+        printf("|           OPCAO INVALIDA!         |\n");
+        printf("|                                   |\n");
+        printf("| 1- SORTEAR                        |\n");
+        printf("| 2- LISTAR CLIENTES                |\n");
+        printf("| 3- LISTAR TICKTES                 |\n");
+        printf("| 4- TICKETS E INFORMACOES          |\n");
+        printf("|                                   |\n");
+        printf("|-----------------------------------|\n");
+        printf("| 0 - MENU PRINCIPAL                |\n");
+        printf("|-----------------------------------|\n");
+        printf("|DIGITE A OPCAO: ");
+        scanf("%d", &opc);
+    }
+    return opc;
+}
+
+int menuPrincipalCliente() // MENU cliente
+{
+    int opc;
+
+    system("cls");
+    printf("|-----------------------------------|\n");
+    printf("|                Menu               |\n");
+    printf("|-----------------------------------|\n");
+    printf("|                                   |\n");
+    printf("| 1- CADASTRO                       |\n");
+    printf("| 2- LISTAR CURSOS                  |\n");
+    printf("| 3- COMPRAR CURSOS                 |\n");
+    printf("|                                   |\n");
+    printf("|-----------------------------------|\n");
+    printf("| 0 - MENU PRINCIPAL                |\n");
+    printf("|-----------------------------------|\n");
+    printf("DIGITE A OPCAO: ");
+    scanf("%d", &opc);
+
+    while (opc != 1 && opc != 2 && opc != 0 && opc != 3 && opc != 4) // tratando erro (menu)
+    {
+        system("cls");
+        printf("|-----------------------------------|\n");
+        printf("|                Menu               |\n");
+        printf("|-----------------------------------|\n");
+        printf("|           OPCAO INVALIDA!         |\n");
+        printf("|                                   |\n");
+        printf("| 1- CADASTRO                       |\n");
+        printf("| 2- LISTAR CURSOS                  |\n");
+        printf("| 3- COMPRAR CURSOS                 |\n");
+        printf("|                                   |\n");
+        printf("|-----------------------------------|\n");
+        printf("| 0 - MENU PRINCIPAL                |\n");
+        printf("|-----------------------------------|\n");
+        printf("DIGITE A OPCAO: ");
+        scanf("%d", &opc);
+    }
+    return opc;
+}
